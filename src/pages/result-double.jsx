@@ -12,7 +12,7 @@ const Result = () => {
   const { data } = router.query;
   const object = data ? JSON.parse(decodeURIComponent(data)) : [];
 
-  console.log(object);
+  // console.log(object);
 
   useEffect(() => {
     if (data?.length <= 0) {

@@ -180,7 +180,7 @@ const InstagramStoryPlayer = ({
         <div
           onClick={(e) => {
             togglePlayPause();
-            console.log(e.target, e.currentTarget);
+            // console.log(e.target, e.currentTarget);
 
             e.target === e.currentTarget && setDisplayBtns(true);
           }}

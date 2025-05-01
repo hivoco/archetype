@@ -17,12 +17,9 @@ function Signup() {
   const { ArchetypeData, setArchetypeData } = useContext(ArchetypeContext);
     
   const router =useRouter()
-  console.log(ArchetypeData,"ArchetypeData");
-  
-  console.log(email,name);
-  
-  
-  
+  // console.log(ArchetypeData,"ArchetypeData");
+  // console.log(email,name);
+    
   useEffect(() => {
     if (ArchetypeData.length === 0) {
       router.push("/quiz");
@@ -68,7 +65,7 @@ function Signup() {
     <div className="flex justify-center items-center h-svh bg-dark-brown py-10">
       <div className=" text-white px-8 h-full flex flex-col gap-y-10">
         <section className="flex flex-col gap-y-9">
-          <Link href={"know-more"}>
+          <Link href={"/result"}>
             <MoveLeft size={20} />
           </Link>
 

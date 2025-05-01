@@ -9,12 +9,11 @@ const ThankYouScreen = () => {
   const router = useRouter()
   const fileUrl = pdfData.pdfUrl
   const fileName=pdfData.title
-  console.log(pdfData,"pdfData");
+  // console.log(pdfData,"pdfData");
   const [shared, setShared] = useState(false);
   const [error, setError] = useState('');
 
   
-
 
   const [startAnimation, setStartAnimation] = useState(false);
   useEffect(() => {

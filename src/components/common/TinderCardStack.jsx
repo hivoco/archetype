@@ -28,12 +28,12 @@ const TinderCardStack = () => {
   const [lastDirection, setLastDirection] = useState();
 
   const swiped = (direction, nameToDelete) => {
-    console.log("removing: " + nameToDelete + " to the " + direction);
+    // console.log("removing: " + nameToDelete + " to the " + direction);
     setLastDirection(direction);
   };
 
   const outOfFrame = (name) => {
-    console.log(name + " left the screen!");
+    // console.log(name + " left the screen!");
   };
 
   return (

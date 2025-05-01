@@ -10,13 +10,18 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import dynamic from 'next/dynamic';
 
-const LottieAnimation = dynamic(() => import('../components/common/LottieAnimation'), {
-  // loading: () => <p>Loading...</p>, 
-  ssr: false, 
-});
+const LottieAnimation = dynamic(
+  () => import("../components/common/LottieAnimation"),
+  {
+    ssr: false,
+  }
+);
+
+
 
 
 const Quiz = () => {
+
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 

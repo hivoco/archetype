@@ -24,7 +24,7 @@ const Result = () => {
 
   
 
-  console.log(object.length);
+  // console.log(object.length);
 
   useEffect(() => {
     if (data?.length <= 0) {

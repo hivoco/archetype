@@ -3,13 +3,16 @@ import React, { useState, useMemo, useEffect, useContext } from "react";
 import TinderCard from "react-tinder-card";
 import { useRouter } from "next/router";
 import { ResultContext } from "@/context/ResultContext";
+import { QuizDataContext } from "@/context/QuizDataContext";
 
 const CardSwiper = ({ step, setStep, setIsLoading }) => {
+  const { quizResult, setQuizResult } = useContext(QuizDataContext);
+
   const [questions, setQuestions] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   // const [result, setResult] = useState([]);
   const { result, setResult } = useContext(ResultContext);
-  console.log(result,'res');
+  // console.log(result,'res');
   
   
 
@@ -54,16 +57,17 @@ const CardSwiper = ({ step, setStep, setIsLoading }) => {
       }
 
       const result = await response.json();
+      setQuizResult(result);
+      // setIsLoading(false);
+      router.push("/result")
 
-      setIsLoading(false);
+      // result &&
+      //   router.push({
+      //     pathname: "/result",
+      //     query: { data: encodeURIComponent(JSON.stringify(result)) },
+      //   });
 
-      result &&
-        router.push({
-          pathname: "/result",
-          query: { data: encodeURIComponent(JSON.stringify(result)) },
-        });
-
-      console.log("Success:", result);
+      // console.log("Success:", result);
       return result;
     } catch (error) {
       console.error("Error:", error);
