@@ -2,6 +2,7 @@ import LinkButton from "@/components/common/LinkButton";
 import { ArchetypeContext } from "@/context/ArchetypeContext";
 import { DataContext } from "@/context/DataContext";
 import { QuizDataContext } from "@/context/QuizDataContext";
+import { ResultContext } from "@/context/ResultContext";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +13,8 @@ const Result = () => {
   const router = useRouter();
   const [animationCounter, setAnimationCounter] = useState(0);
   const { data } = router.query;
+  const { result, setResult } = useContext(ResultContext);
+  
   // const object = data ? JSON.parse(decodeURIComponent(data)) : [];
 
   const { quizResult, setQuizResult } = useContext(QuizDataContext);
@@ -74,9 +77,15 @@ const Result = () => {
       <div className="flex flex-col gap-y-8  ">
         {/* mb-3 */}
         <div className="flex gap-x-2 items-center">
-          <Link href={"/"}>
-            <ArrowLeft size={24} />
-          </Link>
+          {/* <Link onClick={()=>setResult([])} href={"/quiz"}> */}
+          <ArrowLeft
+            onClick={() => {
+              setResult([]);
+              router.back();
+            }}
+            size={24}
+          />
+          {/* </Link> */}
 
           <span className="text-base font-medium text-left self-center">
             Your Career Archetype

@@ -12,10 +12,8 @@ const CardSwiper = ({ step, setStep, setIsLoading }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   // const [result, setResult] = useState([]);
   const { result, setResult } = useContext(ResultContext);
-  // console.log(result,'res');
+  console.log(result,'result');
   
-  
-
   const [currentIndex, setCurrentIndex] = useState(11);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -42,15 +40,13 @@ const CardSwiper = ({ step, setStep, setIsLoading }) => {
     const url="https://backend.hivoco.com/quiz/calculate-result"
     try {
       setIsLoading(true);
-      const response = await fetch(url,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -58,8 +54,8 @@ const CardSwiper = ({ step, setStep, setIsLoading }) => {
 
       const result = await response.json();
       setQuizResult(result);
-      // setIsLoading(false);
-      router.push("/result")
+      setIsLoading(false);
+      router.push("/result");
 
       // result &&
       //   router.push({
@@ -75,12 +71,19 @@ const CardSwiper = ({ step, setStep, setIsLoading }) => {
     }
   }
 
+  // console.log(questions,questions?.length);
+
   useEffect(() => {
+    // console.questions?.length)
+    if (questions?.length) {
+      setResult([]);
+    }
+
     fetchData();
   }, []);
 
   useEffect(() => {
-    if (result.length === 11) {
+    if (result.length === 11 ) {
       postData(result);
     }
   }, [result]);
