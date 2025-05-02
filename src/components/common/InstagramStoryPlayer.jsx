@@ -138,9 +138,16 @@ const InstagramStoryPlayer = ({
   };
 
   useEffect(() => {
+    let timeoutId;
     if (isVideoEnded) {
-      router.push(href);
+      timeoutId = setTimeout(() => {
+        router.push(href);
+      }, 4000);
     }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [isVideoEnded]);
 
   useEffect(() => {
@@ -149,89 +156,107 @@ const InstagramStoryPlayer = ({
     }, 100);
   }, []);
 
-  return (
-    <div
-      className={`fixed inset-0 h-svh w-full bg-black 
+  // if (isVideoEnded) {
+  //   return (
+  //     <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2   z-50 w-4/5 mx-auto  py-14 px-7 rounded-3xl bg-milk-white font-Inter font-semibold text-xl leading-6 text-center ">
+  //       Trust your gut and pick the response that comes to you first. Please
+  //       don’t overthink.
+  //     </div>
+  //   );
+  // } 
+
+    return (
+      <div
+        className={`fixed inset-0 h-svh w-full bg-black 
       transition-transform duration-1000 ease-in-out
       ${isLoaded ? "translate-x-0" : "translate-x-full"} 
       `}
-    >
-      {/* Progress Bar */}
-      <div className="absolute top-2 left-0 right-0 z-10 px-2">
-        <div className="h-2 bg-[#8D8D8D]/50 rounded-3xl overflow-hidden">
+      >
+        {/* Progress Bar */}
+        <div className="absolute top-2 left-0 right-0 z-10 px-2">
+          <div className="h-2 bg-[#8D8D8D]/50 rounded-3xl overflow-hidden">
+            <div
+              className="h-full bg-cream rounded-3xl"
+              style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
+            ></div>
+          </div>
+        </div>
+        {/* Video */}
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          className="w-full h-full object-contain"
+          playsInline
+          muted={isMuted}
+        />
+        {/* Central Play/Pause Overlayed */}
+        {!isVideoEnded && (
           <div
-            className="h-full bg-cream rounded-3xl"
-            style={{ width: `${progress}%`, transition: "width 0.1s linear" }}
-          ></div>
-        </div>
-      </div>
+            onClick={(e) => {
+              togglePlayPause();
+              // console.log(e.target, e.currentTarget);
 
-      {/* Video */}
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        className="w-full h-full object-contain"
-        playsInline
-        muted={isMuted}
-      />
-
-      {/* Central Play/Pause Overlayed */}
-      {!isVideoEnded && (
+              e.target === e.currentTarget && setDisplayBtns(true);
+            }}
+            // onClick={togglePlayPause}
+            className="absolute inset-0 z-20 flex items-center justify-center"
+          >
+            {!isPlaying && (
+              <div className="bg-black/50 p-4 rounded-full pointer-events-none">
+                <Play color="white" size={40} />
+              </div>
+            )}
+          </div>
+        )}
         <div
-          onClick={(e) => {
-            togglePlayPause();
-            // console.log(e.target, e.currentTarget);
-
-            e.target === e.currentTarget && setDisplayBtns(true);
-          }}
-          // onClick={togglePlayPause}
-          className="absolute inset-0 z-20 flex items-center justify-center"
-        >
-          {!isPlaying && (
-            <div className="bg-black/50 p-4 rounded-full pointer-events-none">
-              <Play color="white" size={40} />
-            </div>
-          )}
-        </div>
-      )}
-
-      <div
-        className={`absolute top-[10%] flex flex-col right-4 z-30 gap-y-2
+          className={`absolute top-[10%] flex flex-col right-4 z-30 gap-y-2
         transition-opacity ease-in-out duration-1000
         ${
           displayBtns
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
-      >
-        <Link
-          // onClick={(e) => !displayBtns && e.stopPropagation()}
-          href={displayBtns ? href : ""}
-          className={`bg-black/50 w-full p-[10px] gap-1 rounded-full flex items-center text-white font-Inter text-base
+        >
+          <button
+            // onClick={(e) => !displayBtns && e.stopPropagation()}
+            // href={displayBtns ? href : ""}
+            onClick={() => {
+              // videoRef.current.pause();
+              // videoRef.current.currentTime=0;
+              setIsVideoEnded(true);
+            }}
+            className={`bg-black/50 w-full p-[10px] gap-1 rounded-full flex items-center text-white font-Inter text-base
             ${showSkipBtn ? "opacity-100" : "hidden"}  
             `}
-        >
-          Skip
-          <SkipForward
-            size={20}
-            color="white"
-          />
-        </Link>
+          >
+            Skip
+            <SkipForward size={20} color="white" />
+          </button>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!displayBtns) return;
-            toggleMute();
-          }}
-          // onClick={toggleMute}
-          className="bg-black/50 p-[10px] rounded-full self-end"
-        >
-          {isMuted ? <VolumeX color="white" /> : <Volume2 color="white" />}
-        </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!displayBtns) return;
+              toggleMute();
+            }}
+            // onClick={toggleMute}
+            className="bg-black/50 p-[10px] rounded-full self-end"
+          >
+            {isMuted ? <VolumeX color="white" /> : <Volume2 color="white" />}
+          </button>
+        </div>
+
+        {isVideoEnded && (
+          <>
+            <div className="fixed  inset-0 bg-black/30 backdrop-blur-sm z-40"></div>
+            <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2   z-50 w-4/5 mx-auto  py-14 px-7 rounded-3xl bg-milk-white font-Inter font-semibold text-xl leading-6 text-center ">
+              Trust your gut and pick the response that comes to you first.
+              Please don’t overthink.
+            </div>
+          </>
+        )}
       </div>
-    </div>
-  );
+    );
 };
 
 export default InstagramStoryPlayer;

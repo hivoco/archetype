@@ -2,7 +2,7 @@ import LinkButton from "@/components/common/LinkButton";
 import { ArchetypeContext } from "@/context/ArchetypeContext";
 import { DataContext } from "@/context/DataContext";
 import { ResultContext } from "@/context/ResultContext";
-import { ArrowRight, MoveLeft } from "lucide-react";
+import { ArrowRight, Download, MoveLeft, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,17 +15,108 @@ function Signup() {
   const { result, setResult } = useContext(ResultContext);
   const { pdfData, setPdfData } = useContext(DataContext);
   const { ArchetypeData, setArchetypeData } = useContext(ArchetypeContext);
+  //  const { pdfData } = useContext(DataContext);
+    const router = useRouter()
+    const fileUrl = pdfData.pdfUrl
+    const fileName=pdfData.title
+    // console.log(pdfData,"pdfData");
+    const [shared, setShared] = useState(false);
+    const [error, setError] = useState('');
+  
     
-  const router =useRouter()
+  
+    useEffect(() => {
+      if (ArchetypeData.length === 0) {
+        router.push("/quiz");
+      }
+
+      if (Array.isArray(pdfData) && pdfData.length === 0) {
+        router.push("/quiz");
+      } else {
+        setStartAnimation(true);
+      }
+    }, []);
+  
+  
+    const handleShare = async () => {
+      // Reset states
+      setError('');
+      setShared(false);
+  
+      try {
+        // Check if Web Share API is supported
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const file = new File([blob], `${fileName}`, { type: 'application/pdf' });
+  
+        if (!navigator.share) {
+          throw new Error('Web Share API not supported');
+        }
+        
+        if (navigator.share) {
+          await navigator.share({
+            title: fileName,
+            text: "Here is a PDF that you might find interesting.",
+            url: fileUrl,
+            files: [file],
+          });
+        }
+        else{
+          const shareUrl = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = shareUrl;
+          a.download = `${pdfTitle}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(shareUrl);
+        }
+  
+        setShared(true);
+        setTimeout(() => setShared(false), 2000); // Reset success state after 2s
+      } catch (err) {
+        setError(err.message);
+        setTimeout(() => setError(''), 3000); // Clear error after 3s
+      }
+    };
+  
+    const handleDownload = async() => {
+      // window.open(fileUrl, '_blank'); // Opens the PDF in a new tab
+      try {
+        const response = await fetch(fileUrl);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        
+        link.href = url;
+        link.download = fileName;
+        
+        // Required for Firefox
+        document.body.appendChild(link);
+        
+        link.click();
+        
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+      } catch (error) {
+        console.error('Download failed:', error);
+        alert('Failed to download file. Please try again later.');
+      } finally {
+        // setIsLoading(false);
+      }
+  
+    };
+    
   // console.log(ArchetypeData,"ArchetypeData");
   // console.log(email,name);
     
-  useEffect(() => {
-    if (ArchetypeData.length === 0) {
-      router.push("/quiz");
-    }
-    setStartAnimation(true);
-  }, []);
 
   async function sendData( ) {
     if (!name || !email) return;
@@ -59,11 +150,11 @@ function Signup() {
   }
 
   if (ArchetypeData.length === 0) {
-    return null;
+    // return null;
   }
   return (
     <div className="flex justify-center items-center h-svh bg-dark-brown py-10">
-      <div className=" text-white px-8 h-full flex flex-col gap-y-10">
+      <div className=" text-white px-6 h-full flex flex-col gap-y-10">
         <section className="flex flex-col gap-y-9">
           <Link href={"/result"}>
             <MoveLeft size={20} />
@@ -89,14 +180,16 @@ function Signup() {
                 ? "translate-y-0 opacity-100"
                 : "translate-y-20 opacity-0"
             }
-              text-xl font-bold  text-center tracking-wide`}
+              text-base leading-5 font-normal text-center `}
             >
-              To Get Your Report
+
+              Please share your details if you’d like to receive this report in
+              your email.
             </h2>
           </div>
         </section>
 
-        <form  className="flex flex-col flex-1 justify-between">
+        <form className="flex flex-col flex-1 justify-between">
           <div
             className={`
             transition-all duration-1000 ease-in-out
@@ -137,7 +230,7 @@ function Signup() {
               autoComplete="email"
               placeholder="Email Id"
               required
-              className="w-full text-base text-white text-left bg-transparent p-3  rounded-md border border-off-white outline-none placeholder:text-white
+              className="w-full text-base text-white text-left bg-transparent p-3 mb-7  rounded-md border border-off-white outline-none placeholder:text-white
               [&:-webkit-autofill]:bg-transparent
               [&:-webkit-autofill:hover]:bg-transparent
               [&:-webkit-autofill:focus]:bg-transparent
@@ -146,13 +239,12 @@ function Signup() {
               [&:-webkit-autofill]:[-webkit-text-fill-color:inherit]
               "
             />
-          </div>
 
-          <button
-          type="button"
-            // href={"thank-you-screen"}
-            onClick={sendData}
-            className={`
+            <button
+              type="button"
+              // href={"thank-you-screen"}
+              onClick={sendData}
+              className={`
               transition-all duration-1000 ease-in-out
               ${
                 startAnimation
@@ -160,12 +252,41 @@ function Signup() {
                   : "translate-y-[200%] opacity-0"
               }
               flex w-full items-center justify-center px-2 py-3 gap-2 bg-[#FFF3E140] rounded-[40px] text-white font-semibold text-sm`}
+            >
+              <span>Send Report</span>
+              <ArrowRight size={20} />
+            </button>
+          </div>
+        </form>
+
+        <div
+          className={`flex justify-between w-full gap-x-3 self-end 
+          transition-all duration-1000 ease-in-out
+          ${
+            startAnimation
+              ? "translate-y-0 opacity-100"
+              : "translate-y-36 opacity-0"
+          }
+        `}
+        >
+          {/* Download Button */}
+          <button
+            onClick={handleDownload}
+            className="text-sm font-bold tracking-tight text-center bg-cream shadow-[0px_2px_2px_0px_#FFF3E129] w-1/2 text-dark-brown border-2 border-solid border-[#FFF3E166] px-2 py-3 rounded-3xl flex items-center justify-center gap-x-1  hover:bg-brown-700 focus:outline-none"
           >
-            <span>SUBMIT</span>
-            <ArrowRight size={20} />
+            <Download size={20} />
+            <span className=" whitespace-nowrap">Download Report</span>
           </button>
 
-        </form>
+          {/* Share Button */}
+          <button
+            onClick={handleShare}
+            className="text-sm font-bold text-center w-1/2 text-cream  border-2 border-solid border-cream px-2 py-3 rounded-3xl flex items-center justify-center gap-x-1  hover:bg-brown-700 focus:outline-none"
+          >
+            <Share2 size={20} />
+            <span className=" whitespace-nowrap">Share Report</span>
+          </button>
+        </div>
       </div>
     </div>
   );

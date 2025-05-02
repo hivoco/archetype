@@ -319,11 +319,12 @@ const Result = () => {
           ${animationCounter >= 3 ? "opacity-100" : "opacity-0"}
           `}
         >
-          Where curiosity <br /> meets strategy, passion thrives.
+          {/* Where curiosity <br /> meets strategy, passion thrives. */}
+          Learn more about your Career <br /> Archetypes.
         </h2>
 
         <LinkButton
-          title={"NEXT"}
+          title={"Get Your Report"}
           href={"/signup"}
           className={`transition-transform duration-1000 h-[46px] w-full
                     ${
