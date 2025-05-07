@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }) {
           content="career quiz, career archetype, personality quiz, career personality test, work motivation, career choices, free career test, discover career path, career assessment, job personality quiz"
         />
 
-        <meta property="og:image" content="/images/logo.png" />
+        <meta property="og:image" content="/images/logo_only.png" />
         <link rel="icon" href="" />
 
         <title>of Experience </title>
